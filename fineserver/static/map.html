@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Map</title>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+  <script type="text/javascript" src="https://raw.github.com/HPNeo/gmaps/master/gmaps.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Convergence|Bitter|Droid+Sans|Ubuntu+Mono' rel='stylesheet' type='text/css' />
+  <script type="text/javascript">
+    var map;
+    $(document).ready(function(){
+      map = new GMaps({
+        div: '#map',
+        lat: -12.043333,
+        lng: -77.028333
+      });
+    });
+  </script>
+  <style type="text/css" media="screen">
+    #map {
+      position:absolute;
+      top: 0; bottom: 0; left: 0; right: 0;
+    }
+  </style>
+</head>
+<body>
+  <p>Loading...</p>
+  <div id="map"></div>
+  <script type="text/javascript">
+    var sock;
+    $(document).ready(function(){
+      sock = new WebSocket("ws://elqotbi.com:8888/sock");
+      sock.onopen = function(){ console.log("Connected websocket"); };
+      sock.onerror = function(){ console.log("Websocket error"); };
+      sock.onmessage = function(evt){
+        var latlng = JSON.parse(evt.data);
+        console.log("Got marker at " + latlng.lat + ", " + latlng.lng, latlng);
+        map.setZoom(3);
+        map.setCenter(latlng.lat, latlng.lng);
+        map.addMarker(latlng);
+      }
+    });
+  </script>
+</body>
+</html>
